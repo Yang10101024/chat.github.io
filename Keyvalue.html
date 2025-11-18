@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>微信风格聊天室 - 关键字回复示例</title>
+  <style>
+    :root{
+      --bg1:#e9efff;
+      --bg2:#f7f9fc;
+      --weui-green:#7dc242;
+      --me-bg:#dcf8c6;
+      --other-bg:#ffffff;
+      --accent:#4a6eff;
+      --card-shadow: 0 8px 24px rgba(39,46,67,0.08);
+      --radius:14px;
+      --muted:#9aa4b2;
+      font-family: "PingFang SC","Microsoft YaHei",Arial,Helvetica,sans-serif;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(circle at 10% 10%, rgba(74,110,255,0.08), transparent 20%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+
+    /* 容器 */
+    .app{
+      width:370px;max-width:96vw;height:720px;max-height:96vh;
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.95));
+      border-radius:20px;box-shadow:var(--card-shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;
+    }
+
+    /* 顶部栏 */
+    .top{
+      height:64px;padding:12px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(0,0,0,0.04);
+      background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));backdrop-filter: blur(4px);
+    }
+    .avatar{width:40px;height:40px;border-radius:8px;overflow:hidden;flex:0 0 40px}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .title{font-weight:600}
+    .subtitle{font-size:12px;color:var(--muted)}
+
+    /* 聊天区 */
+    .messages{
+      flex:1;overflow:auto;padding:18px 14px;display:flex;flex-direction:column;gap:12px;background-image:linear-gradient(transparent, rgba(0,0,0,0.01));
+    }
+    .day-sep{align-self:center;font-size:12px;color:var(--muted);background:rgba(255,255,255,0.6);padding:6px 10px;border-radius:12px}
+
+    /* 气泡 */
+    .msg{display:flex;gap:10px;align-items:flex-end}
+    .msg.me{flex-direction:row-reverse}
+    .bubble{
+      max-width:72%;padding:10px 12px;border-radius:14px;border-bottom-left-radius:6px;position:relative;word-break:break-word;box-shadow:0 1px 0 rgba(0,0,0,0.03);
+    }
+    .bubble.me{background:var(--me-bg)}
+    .bubble.other{background:var(--other-bg)}
+    .time{font-size:11px;color:var(--muted);margin:6px 6px 0;text-align:center}
+
+    /* 小头像 */
+    .small-avatar{width:36px;height:36px;border-radius:8px;overflow:hidden;flex:0 0 36px}
+    .small-avatar img{width:100%;height:100%;object-fit:cover}
+
+    /* 输入区 */
+    .composer{height:78px;padding:10px;border-top:1px solid rgba(0,0,0,0.04);display:flex;gap:10px;align-items:center}
+    .input-wrap{flex:1;display:flex;align-items:center;background:rgba(0,0,0,0.03);padding:10px;border-radius:20px;gap:8px}
+    .input-wrap input{flex:1;border:none;background:transparent;outline:none;font-size:15px}
+    .btn-send{background:var(--accent);color:#fff;padding:10px 12px;border-radius:16px;border:none;font-weight:600;cursor:pointer}
+    .btn-send:disabled{opacity:0.45;cursor:default}
+
+    /* 装饰性图案 */
+    .paper-ornament{position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(122,141,255,0.18), transparent 40%);filter:blur(12px)}
+    .paper-ornament2{position:absolute;left:-50px;bottom:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 50% 50%, rgba(255,200,100,0.14), transparent 40%);filter:blur(10px)}
+
+    /* 小动画 */
+    .typing{display:inline-block;height:10px;width:26px;position:relative}
+    .dot{position:absolute;bottom:0;width:6px;height:6px;border-radius:50%;background:rgba(0,0,0,0.24);animation:blink 1s infinite}
+    .dot:nth-child(2){left:8px;animation-delay:.12s}
+    .dot:nth-child(3){left:16px;animation-delay:.24s}
+    @keyframes blink{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+
+    /* 响应 */
+    @media (max-width:420px){.app{height:94vh;border-radius:12px}}
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="paper-ornament"></div>
+    <div class="paper-ornament2"></div>
+
+    <div class="top">
+      <div class="avatar"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect rx='10' width='100%' height='100%' fill='%234a6eff'/><text x='50%' y='55%' fill='white' font-size='36' font-family='Arial' text-anchor='middle' dominant-baseline='middle'>W</text></svg>" alt="avatar"></div>
+      <div>
+        <div class="title">微信风格机器人</div>
+        <div class="subtitle">关键字回复 · 本地运行</div>
+      </div>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="day-sep">今天</div>
+      <!-- messages will be injected here -->
+    </div>
+
+    <div class="composer">
+      <div class="input-wrap">
+        <input id="input" placeholder="输入内容，例：你好 / 天气 / 帮助" maxlength="200">
+      </div>
+      <button id="send" class="btn-send">发送</button>
+    </div>
+  </div>
+
+  <script>
+    // 关键字回复表
+    const replies = {
+      '你好': '你好呀！我是小助手，有什么可以帮你的？',
+      '天气': '今天天气晴，记得带把伞以防万一 🌦️',
+      '帮助': '试试输入：你好、天气、笑话、再见。',
+      '笑话': '有一天…程序员说：“这段代码不工作。” 另一段代码说：“那就重启它！” 😄',
+      '再见': '再见！祝你编程顺利～'
+    };
+
+    // 本地消息存储 key
+    const STORAGE_KEY = 'wechat_like_chat_history_v1';
+
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('input');
+    const sendBtn = document.getElementById('send');
+
+    // 加载历史
+    let history = [];
+    try{ history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }catch(e){ history = [] }
+
+    function formatTime(ts){
+      const d = new Date(ts);
+      return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    }
+
+    function renderMessage(msg){
+      const wrapper = document.createElement('div');
+      wrapper.className = 'msg ' + (msg.from === 'me' ? 'me' : 'other');
+
+      const avatar = document.createElement('div');
+      avatar.className = 'small-avatar';
+      const img = document.createElement('img');
+      // 简单头像占位：不同来源用不同颜色
+      if(msg.from==='me') img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect rx='10' width='100%' height='100%' fill='%23f4b400'/><text x='50%' y='55%' fill='white' font-size='30' font-family='Arial' text-anchor='middle' dominant-baseline='middle'>你</text></svg>";
+      else img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect rx='10' width='100%' height='100%' fill='%234a6eff'/><text x='50%' y='55%' fill='white' font-size='30' font-family='Arial' text-anchor='middle' dominant-baseline='middle'>机</text></svg>";
+      avatar.appendChild(img);
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + (msg.from==='me' ? 'me' : 'other');
+
+      // 支持 html 简单换行
+      bubble.innerHTML = msg.text.replace(/\n/g,'<br/>');
+
+      const time = document.createElement('div');
+      time.className = 'time';
+      time.textContent = formatTime(msg.ts);
+
+      wrapper.appendChild(avatar);
+      wrapper.appendChild(bubble);
+      wrapper.appendChild(time);
+
+      messagesEl.appendChild(wrapper);
+    }
+
+    function saveHistory(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); }
+
+    function scrollToBottom(){ messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+    // 初始化渲染
+    function init(){
+      messagesEl.innerHTML = '<div class="day-sep">今天</div>';
+      for(const m of history){ renderMessage(m); }
+      scrollToBottom();
+    }
+
+    init();
+
+    function addMessage(from, text){
+      const msg = {from, text, ts: Date.now()};
+      history.push(msg);
+      saveHistory();
+      renderMessage(msg);
+      scrollToBottom();
+    }
+
+    // 处理回复（简单关键字匹配）
+    function handleReply(userText){
+      // 精确匹配优先
+      const key = userText.trim();
+      if(!key) return;
+
+      if(replies[key]){
+        // 模拟对方输入和打字
+        setTimeout(()=>{ showTyping(); }, 250);
+        setTimeout(()=>{ hideTyping(); addMessage('bot', replies[key]); }, 850 + Math.min(900, key.length * 80));
+      } else {
+        // 模糊匹配：包含关键字
+        for(const k of Object.keys(replies)){
+          if(key.includes(k)){
+            setTimeout(()=>{ showTyping(); }, 250);
+            setTimeout(()=>{ hideTyping(); addMessage('bot', replies[k]); }, 700 + Math.min(1000, key.length * 60));
+            return;
+          }
+        }
+        // 默认回复
+        setTimeout(()=>{ showTyping(); }, 250);
+        setTimeout(()=>{ hideTyping(); addMessage('bot', '抱歉，我暂时还不太懂你的意思，可试试：帮助'); }, 900);
+      }
+    }
+
+    // 打字动画
+    let typingEl = null;
+    function showTyping(){
+      if(typingEl) return;
+      typingEl = document.createElement('div');
+      typingEl.className = 'msg other';
+      typingEl.style.opacity = '0.9';
+      typingEl.style.pointerEvents = 'none';
+
+      const avatar = document.createElement('div'); avatar.className='small-avatar';
+      avatar.innerHTML = "<img src=\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='72' height='72'><rect rx='10' width='100%' height='100%' fill='%234a6eff'/><text x='50%' y='55%' fill='white' font-size='30' font-family='Arial' text-anchor='middle' dominant-baseline='middle'>机</text></svg>\"/>";
+      const bubble = document.createElement('div'); bubble.className='bubble other';
+      bubble.innerHTML = '<span class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+      const time = document.createElement('div'); time.className='time'; time.textContent='';
+      typingEl.appendChild(avatar);typingEl.appendChild(bubble);typingEl.appendChild(time);
+      messagesEl.appendChild(typingEl);
+      scrollToBottom();
+    }
+    function hideTyping(){ if(typingEl){ messagesEl.removeChild(typingEl); typingEl=null; } }
+
+    // 发送逻辑
+    function doSend(){
+      const text = inputEl.value.trim();
+      if(!text) return;
+      addMessage('me', text);
+      inputEl.value='';
+      handleReply(text);
+    }
+
+    sendBtn.addEventListener('click', doSend);
+    inputEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); doSend(); } });
+
+    // 右上角快捷示例（可选扩展）
+    // 清理历史：长按 send 按钮清理（开发者用）
+    let holdTimer=null;
+    sendBtn.addEventListener('mousedown', ()=>{ holdTimer=setTimeout(()=>{ if(confirm('清空聊天记录？')){ history=[]; saveHistory(); init(); } },800); });
+    window.addEventListener('mouseup', ()=>{ clearTimeout(holdTimer); holdTimer=null; });
+
+    // 第一次欢迎
+    if(history.length===0){ setTimeout(()=>{ addMessage('bot','欢迎！我已准备好。你可以输入：你好、天气、帮助、笑话、再见'); },400); }
+  </script>
+</body>
+</html>
